@@ -1,33 +1,26 @@
-//
-//  GameAboutScene.h
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-14.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
-//
+#ifndef _GameAboutScene_h
+#define _GameAboutScene_h
 
-#ifndef example15_1_GameAboutScene_h
-#define example15_1_GameAboutScene_h
 #include "cocos2d.h"
-using namespace cocos2d;
-class GameAbout : public cocos2d::CCLayer
+class GameAboutScene:public cocos2d::CCLayer
 {
 public:
-    
-    virtual bool init();
-    
-    virtual void onEnter();
-    
-    virtual void onExit();
-    
-    static cocos2d::CCScene* scene();
-    
-    void menuBackCallback(CCObject* pSender);
-    
-    void menuEnter();
-    
-    CREATE_FUNC(GameAbout);
-};
+	GameAboutScene(void);
+	~GameAboutScene(void);
 
+	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
+	virtual bool init();  
+
+	virtual void onEnter();
+
+	virtual void onExit();
+	// there's no 'id' in cpp, so we recommand to return the exactly class pointer
+	static cocos2d::CCScene* scene();
+
+	void menuBackCallback(CCObject* pSender);
+	void menuEnter(CCNode* pSender);
+
+	CREATE_FUNC(GameAboutScene);
+};
 
 #endif

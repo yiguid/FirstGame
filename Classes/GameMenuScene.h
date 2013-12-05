@@ -1,42 +1,41 @@
-//
-//  GameMenuScene.h
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-13.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
-//
-
-#ifndef example15_1_GameMenuScene_h
-#define example15_1_GameMenuScene_h
+#ifndef _GameMenuScene_h
+#define _GameMenuScene_h
 
 #include "cocos2d.h"
-using namespace cocos2d;
-class GameMenu : public cocos2d::CCLayer
+
+class GameMenuScene :public cocos2d::CCLayer
 {
 public:
-    bool issound;
-    
-    CCMenuItemImage *soundItem;
-    
-    virtual bool init();
-    
-    virtual void onEnter();
-    
-    virtual void onExit();
-    
-    static cocos2d::CCScene* scene();
-    
-    void menuEnter();
-    
-    void menuNewGameCallback(CCObject* pSender);
-    
-    void menuContinueCallback(CCObject* pSender);
-    
-    void menuAboutCallback(CCObject* pSender);
-    
-    void menuSoundCallback(CCObject* pSender);
-    
-    CREATE_FUNC(GameMenu);
+	GameMenuScene(void);
+	~GameMenuScene(void);
+
+	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
+	virtual bool init();  
+
+	virtual void onEnter();
+
+	virtual void onExit();
+	// there's no 'id' in cpp, so we recommand to return the exactly class pointer
+	static cocos2d::CCScene* scene();
+
+	// a selector callback
+	void menuCloseCallback(CCObject* pSender);
+
+	// implement the "static node()" method manually
+	void menuNewGameCallback(CCObject* pSender);
+
+	void menuContinueCallback(CCObject* pSender);
+
+	void menuAboutCallback(CCObject* pSender);
+
+	void menuSoundCallback(CCObject* pSender);
+
+	void menuEnter(CCNode* pSender);
+	CREATE_FUNC(GameMenuScene);
+
+private:
+	 bool m_isSound;
+	 cocos2d::CCMenuItemImage* m_soundItem;
 };
 
 #endif

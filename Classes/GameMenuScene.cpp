@@ -1,140 +1,166 @@
-//
-//  GameMenuScene.cpp
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-13.
-//  Copyright (c) 2012å¹´ __MyCompanyName__. All rights reserved.
-//
-
 #include "GameMenuScene.h"
 #include "GameAboutScene.h"
-#include "GameScene.h"
+#include "GameMainScene.h"
 #include "SimpleAudioEngine.h"
-
 using namespace cocos2d;
-using namespace CocosDenshion;
 
-CCScene* GameMenu::scene()
+GameMenuScene::GameMenuScene(void)
 {
-    CCScene *scene = CCScene::create();
-    
-    GameMenu *layer = GameMenu::create();
-    
-    scene->addChild(layer);
-    
-    return scene;
+	m_isSound = false;
 }
-bool GameMenu::init()
-{
-    if ( !CCLayer::init() )
-    {
-        return false;
-    }
-    
-    CCSize size = CCDirector::sharedDirector()->getWinSize();    
 
-    //åˆå§‹åŒ–èƒŒæ™¯
-    CCSprite* bg = CCSprite::create("bg.png");
-    bg->setScale(0.5);
-    bg->setPosition( ccp(size.width/2, size.height/2) );
-    this->addChild(bg, 0,0);
-    //åˆå§‹åŒ–èƒŒæ™¯æ˜Ÿçƒ
-    CCSprite*bgstar = CCSprite::create("moon.png");
-    bgstar->setAnchorPoint(ccp(0.5,0));
-    bgstar->setScale(0.5);
-    bgstar->setPosition(ccp(size.width/3 * 2, 0));
-    this->addChild(bgstar,1,1);
-    //åˆå§‹åŒ–æ ‡é¢˜
-    CCNode *title = CCNode::create();
-    title->setContentSize(CCSizeMake(size.width - 40,50));
-    CCSprite *ptmLabel = CCSprite::create("meowstar.png");
-    ptmLabel->setScale(0.5);
-    ptmLabel->setPosition( ccp(0,30) );
-    title->addChild(ptmLabel);
-    CCSprite *ptbLabel = CCSprite::create("battle.png");
-    ptbLabel->setScale(0.5);
-    ptbLabel->setPosition( ccp(0,-30) );
-    title->addChild(ptbLabel);
-    title->setPosition(ccp(size.width / 2, size.height - 80));
-    this->addChild(title,2,2);
-    //åˆå§‹åŒ–æŒ‰é’®
-    CCMenuItemImage *newGameItem = CCMenuItemImage::create("newGameA.png", "newGameB.png",this,menu_selector(GameMenu::menuNewGameCallback));
-    newGameItem->setScale(0.5);
-    newGameItem->setPosition(ccp(size.width / 2,size.height / 2 - 20));
-    newGameItem->setEnabled(false);
-    CCMenuItemImage *continueItem = CCMenuItemImage::create("continueA.png", "continueB.png",this,menu_selector(GameMenu::menuContinueCallback));
-    continueItem->setScale(0.5);
-    continueItem->setPosition(ccp(size.width / 2,size.height / 2 - 80));
-    continueItem->setEnabled(false);
-    CCMenuItemImage *aboutItem = CCMenuItemImage::create("aboutA.png", "aboutB.png",this,menu_selector(GameMenu::menuAboutCallback));
-    aboutItem->setScale(0.5);
-    aboutItem->setPosition(ccp(size.width / 2,size.height / 2 - 140));
-    aboutItem->setEnabled(false);
-    soundItem = CCMenuItemImage::create("sound-on-A.png", "sound-on-B.png",this,menu_selector(GameMenu::menuSoundCallback));
-    soundItem->setScale(0.5);
-    soundItem->setEnabled(false);
-    soundItem->setPosition(ccp(40,40));
-    //ä½¿ç”¨æŒ‰é’®åˆ›å»ºèœå•
-    CCMenu* mainmenu = CCMenu::create(newGameItem,continueItem,aboutItem,soundItem,NULL);
-    mainmenu->setPosition(ccp(0,0));
-    this->addChild(mainmenu,1,3);
-    //åˆå§‹åŒ–å£°éŸ³éƒ¨åˆ†
-    issound = true;//æ˜¯å¦å¼€å¯å£°éŸ³å‚æ•°
-    SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(std::string(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3")).c_str() );
-    SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(0.5);
-    SimpleAudioEngine::sharedEngine()->playBackgroundMusic(std::string(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3")).c_str(), true);
-    return true;
-}
-void GameMenu::onEnter(){
-    CCLayer::onEnter();
-    CCSize size = CCDirector::sharedDirector()->getWinSize();
-    //ç•Œé¢è¿›å…¥æ—¶ï¼Œè¿è¡Œèœå•é¡¹è¿›å…¥åŠ¨ä½œ
-    CCNode* mainmenu = this->getChildByTag(3);
-    mainmenu->setPositionX(-200);
-    mainmenu->runAction(CCSequence::create(CCEaseElasticIn::create(CCMoveTo::create(0.5,ccp(0,0))),CCCallFuncN::create(this, callfuncN_selector(GameMenu::menuEnter)),NULL));
-    
-    CCNode*title = this->getChildByTag(2);
-    title->setPositionY(size.height + 20);
-    title->runAction(CCEaseElasticIn::create(CCMoveBy::create(0.5,ccp(0,-100))));
-    
-    CCNode*bgstar = this->getChildByTag(1);
-    bgstar->setPositionX(size.width/3);
-    bgstar->runAction(CCMoveBy::create(0.5,ccp(size.width/3,0)));
-    
-}
-void GameMenu::menuEnter(){
-    //èœå•è¿›å…¥åŽï¼Œèœå•é¡¹ç‚¹å‡»æœ‰æ•ˆ
-    CCNode* mainmenu = this->getChildByTag(3);
-    CCArray* temp = mainmenu->getChildren();
-    for(int i = 0;i < temp->count();i ++)
-        ((CCMenuItemImage *)temp->objectAtIndex(i))->setEnabled(true);
-}
-void GameMenu::onExit(){
-    CCLayer::onExit();
-}
-void GameMenu::menuNewGameCallback(CCObject* pSender)
+
+GameMenuScene::~GameMenuScene(void)
 {
-    CCDirector::sharedDirector()->replaceScene(GameMain::scene());
 }
-void GameMenu::menuContinueCallback(CCObject* pSender)
+
+bool GameMenuScene::init()
 {
-    CCDirector::sharedDirector()->replaceScene(GameMain::scene());
+	if (!CCLayer::init())
+	{
+		return false;
+	}
+
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+
+	 //³õÊ¼»¯±³¾°
+	CCSprite* back = CCSprite::create("bg.png");
+	back->setScale(0.5);
+	back->setPosition(ccp(size.width/2,size.height/2));
+	this->addChild(back,0,0);
+
+	//³õÊ¼»¯±³¾°ÐÇÇò
+	CCSprite* bgstar = CCSprite::create("moon.png");
+	bgstar->setAnchorPoint(ccp(0.5,0));
+	bgstar->setScale(0.5);
+	bgstar->setPosition(ccp(size.width/3 * 2, 0));
+	this->addChild(bgstar,1,1);
+
+	//³õÊ¼»¯±êÌâ
+	CCNode* title = CCNode::create();
+	title->setContentSize(CCSizeMake(0,0));
+	CCSprite* ptmLabel = CCSprite::create("meowstar.png");
+	ptmLabel->setScale(0.5);
+	ptmLabel->setPosition(ccp(0,30));
+	title->addChild(ptmLabel);
+	CCSprite *ptbLabel = CCSprite::create("battle.png");
+	ptbLabel->setScale(0.5);
+	ptbLabel->setPosition( ccp(0,-30) );
+	title->addChild(ptbLabel);
+	title->setPosition(ccp(size.width / 2, size.height - 80));
+	this->addChild(title,2,2);
+
+	//³õÊ¼»¯°´Å¥
+	CCMenuItemImage *newGameItem = CCMenuItemImage::create("newgameA.png", "newgameB.png",this,menu_selector(GameMenuScene::menuNewGameCallback));
+	newGameItem->setScale(0.5);
+	newGameItem->setPosition(ccp(size.width / 2,size.height / 2 - 20));
+	newGameItem->setEnabled(false);
+	CCMenuItemImage *continueItem = CCMenuItemImage::create("continueA.png", "continueB.png",this,menu_selector(GameMenuScene::menuContinueCallback));
+	continueItem->setScale(0.5);
+	continueItem->setPosition(ccp(size.width / 2,size.height / 2 - 80));
+	continueItem->setEnabled(false);
+	CCMenuItemImage *aboutItem = CCMenuItemImage::create("aboutA.png", "aboutB.png",this,menu_selector(GameMenuScene::menuAboutCallback));
+	aboutItem->setScale(0.5);
+	aboutItem->setPosition(ccp(size.width / 2,size.height / 2 - 140));
+	aboutItem->setEnabled(false);
+	m_soundItem = CCMenuItemImage::create("sound-on-A.png", "sound-on-B.png",this,menu_selector(GameMenuScene::menuSoundCallback));
+	m_soundItem->setScale(0.5);
+	m_soundItem->setEnabled(false);
+	m_soundItem->setPosition(ccp(40,40));
+
+	CCMenuItemImage *pCloseItem = CCMenuItemImage::create(
+		"CloseNormal.png",
+		"CloseSelected.png",
+		this,
+		menu_selector(GameMenuScene::menuCloseCallback));
+	pCloseItem->setPosition(ccp(size.width - 20, 20));
+	//Ê¹ÓÃ°´Å¥´´½¨²Ëµ¥
+	CCMenu* mainmenu = CCMenu::create(newGameItem,continueItem,aboutItem,m_soundItem,pCloseItem,NULL);
+	mainmenu->setPosition(ccp(0,0));
+	this->addChild(mainmenu,1,3);
+
+	m_isSound = true;//ÊÇ·ñ¿ªÆôÉùÒô²ÎÊý
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic( CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3").c_str() );
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(0.5);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3").c_str(), true);
+	return true;
 }
-void GameMenu::menuAboutCallback(CCObject* pSender)
+
+void GameMenuScene::onEnter()
 {
-    CCDirector::sharedDirector()->replaceScene(GameAbout::scene());
+	CCLayer::onEnter();
+	//½øÈëÖ÷²Ëµ¥¶¯»­
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+
+	CCNode* mainmenu = this->getChildByTag(3);
+	mainmenu->setPositionX(-200);
+	mainmenu->runAction(CCSequence::create(CCEaseElasticIn::create(CCMoveTo::create(0.5,ccp(0,0))),CCCallFuncN::create(this, callfuncN_selector(GameMenuScene::menuEnter)),NULL));
+
+	CCNode* title = this->getChildByTag(2);
+	title->setPositionY(size.height + 20);
+	title->runAction(CCEaseElasticIn::create(CCMoveBy::create(0.5,ccp(0,-100))));
+
+	CCNode* bgstar = this->getChildByTag(1);
+	bgstar->setPositionX(size.width/3);
+	bgstar->runAction(CCMoveBy::create(0.5,ccp(size.width/3,0)));
 }
-void GameMenu::menuSoundCallback(CCObject* pSender)
+
+void GameMenuScene::onExit()
 {
-    if(! issound){
-        soundItem->setNormalImage(CCSprite::create("sound-on-A.png"));
-        soundItem->setDisabledImage(CCSprite::create("sound-on-B.png"));
-        SimpleAudioEngine::sharedEngine()->playBackgroundMusic(std::string(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3")).c_str(), true);
-       issound = true;
-    }else{
-        soundItem->setNormalImage(CCSprite::create("sound-off-A.png"));
-        soundItem->setDisabledImage(CCSprite::create("sound-off-B.png"));
-         SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
-       issound = false;
-    }
+	CCLayer::onExit();
+}
+void GameMenuScene::menuEnter( CCNode* pSender )
+{
+	//ÆôÓÃ°´Å¥
+	CCNode* mainmenu = this->getChildByTag(3);
+	CCArray* temp = mainmenu->getChildren();
+	for(unsigned int i = 0;i < temp->count();i ++)
+	{
+		((CCMenuItemImage *)temp->objectAtIndex(i))->setEnabled(true);
+	}
+}
+cocos2d::CCScene* GameMenuScene::scene()
+{
+	CCScene* scene = CCScene::create();
+	GameMenuScene* layer = GameMenuScene::create();
+	scene->addChild(layer);
+	return scene;
+}
+
+void GameMenuScene::menuCloseCallback( CCObject* pSender )
+{
+	CCDirector::sharedDirector()->end();
+}
+
+void GameMenuScene::menuNewGameCallback( CCObject* pSender )
+{
+	CCDirector::sharedDirector()->replaceScene(GameMainScene::scene());
+}
+
+void GameMenuScene::menuContinueCallback( CCObject* pSender )
+{
+	CCDirector::sharedDirector()->replaceScene(GameMainScene::scene());
+}
+
+void GameMenuScene::menuAboutCallback( CCObject* pSender )
+{
+	CCDirector::sharedDirector()->replaceScene(GameAboutScene::scene());
+}
+
+void GameMenuScene::menuSoundCallback( CCObject* pSender )
+{
+	if(!m_isSound)
+	{
+		m_soundItem->setNormalImage(CCSprite::create("sound-on-A.png"));
+		m_soundItem->setDisabledImage(CCSprite::create("sound-on-B.png"));
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3").c_str(), true);
+		m_isSound = true;
+	}
+	else
+	{
+		m_soundItem->setNormalImage(CCSprite::create("sound-off-A.png"));
+		m_soundItem->setDisabledImage(CCSprite::create("sound-off-B.png"));
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
+		m_isSound = false;
+	}
 }

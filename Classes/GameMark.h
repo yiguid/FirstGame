@@ -1,28 +1,23 @@
-//
-//  GameMark.h
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-20.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
-//
-
-#ifndef example15_1_GameMark_h
-#define example15_1_GameMark_h
+#ifndef _GameMark_h
+#define _GameMark_h
 
 #include "cocos2d.h"
-using namespace cocos2d;
+USING_NS_CC;
 
 class GameMark : public CCNode
 {
 public:
-    GameMark(void);
-    virtual ~GameMark(void);
-    virtual void onEnter();
-    virtual void onExit();
-    CCArray *bits;
-    int mark;
-    void addnumber(int var);
-    CCTexture2D* ui;
+	GameMark(void);
+	~GameMark(void);
+
+	virtual void onEnter();
+	virtual void onExit();
+	void addNumber(int var);
+	CREATE_FUNC(GameMark);
+private:
+	int m_score;
+	CCTexture2D* m_ui;
+	CCArray* m_bits;
 };
 
 #endif

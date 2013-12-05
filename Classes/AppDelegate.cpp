@@ -1,37 +1,27 @@
-//
-//  example15_1AppDelegate.cpp
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-13.
-//  Copyright __MyCompanyName__ 2012年. All rights reserved.
-//
-
-#include "AppDelegate.h"
-
 #include "cocos2d.h"
+#include "CCEGLView.h"
+#include "AppDelegate.h"
 #include "GameMenuScene.h"
+#include "SimpleAudioEngine.h"
+
+using namespace CocosDenshion;
 
 USING_NS_CC;
 
 AppDelegate::AppDelegate()
 {
-
 }
 
 AppDelegate::~AppDelegate()
 {
+    SimpleAudioEngine::end();
 }
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
     CCDirector *pDirector = CCDirector::sharedDirector();
-    CCEGLView* pEGLView = CCEGLView::sharedOpenGLView();
-    
-    pDirector->setOpenGLView(pEGLView);
-
-    // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
-    // pDirector->enableRetinaDisplay(true);
+    pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());
 
     // turn on display FPS
     pDirector->setDisplayStats(false);
@@ -40,28 +30,25 @@ bool AppDelegate::applicationDidFinishLaunching()
     pDirector->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    CCScene *pScene = GameMenu::scene();
+    CCScene *pScene = GameMenuScene::scene();
 
     // run
     pDirector->runWithScene(pScene);
-
     return true;
 }
 
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too
 void AppDelegate::applicationDidEnterBackground()
 {
-    CCDirector::sharedDirector()->pause();
+    CCDirector::sharedDirector()->stopAnimation();
 
-    // if you use SimpleAudioEngine, it must be pause
-    // SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
+    SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground()
 {
-    CCDirector::sharedDirector()->resume();
-    
-    // if you use SimpleAudioEngine, it must resume here
-    // SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
+    CCDirector::sharedDirector()->startAnimation();
+
+    SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 }

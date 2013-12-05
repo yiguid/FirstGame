@@ -1,38 +1,31 @@
-//
-//  GameObjHero.h
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-14.
-//  Copyright (c) 2012å¹´ __MyCompanyName__. All rights reserved.
-//
+#ifndef _GameObjHero_h
+#define _GameObjHero_h
 
-#ifndef example15_1_GameObjHero_h
-#define example15_1_GameObjHero_h
 #include "cocos2d.h"
-using namespace cocos2d;
+USING_NS_CC;
 
-class GameObjHero : public CCNode, public CCTargetedTouchDelegate
+class GameObjHero:public CCNode, public CCTargetedTouchDelegate
 {
 public:
-    CCSprite*lefthand;
-    CCSprite*righthand;
-    CCPoint offset;
-    bool iscontrol;
-    GameObjHero(void);
-    virtual ~GameObjHero(void);
-    void releasebullet();
-    CCRect rect();
-    virtual void onEnter();
-    virtual void onExit();
-    bool containsTouchLocation(CCTouch* touch);
-    virtual bool ccTouchBegan(CCTouch* touch, CCEvent* event);
-    virtual void ccTouchMoved(CCTouch* touch, CCEvent* event);
-    virtual void ccTouchEnded(CCTouch* touch, CCEvent* event);
-    
-    virtual void touchDelegateRetain();
-    virtual void touchDelegateRelease();
-    
+	GameObjHero(void);
+	~GameObjHero(void);
+
+	virtual void onEnter();
+	virtual void onExit();
+	virtual bool ccTouchBegan(CCTouch* touch, CCEvent* event);
+	virtual void ccTouchMoved(CCTouch* touch, CCEvent* event);
+	virtual void ccTouchEnded(CCTouch* touch, CCEvent* event);
+	
+	CCRect rect();//Ó¢ÐÛ·¶Î§
+	bool containsTouchLocation(CCTouch* touch);//ÊÇ·ñ´¥Ãþµ½Ó¢ÐÛ
+	void releasebullet(float dt);
+	CREATE_FUNC(GameObjHero);
+private:
+	
+	bool m_isControl;
+	CCPoint m_offset;
+	CCSprite* m_leftHand;
+	CCSprite* m_rightHand;
 };
-
-
 #endif
+

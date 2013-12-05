@@ -2,4 +2,8 @@ Prefix.pch
 .DS_Store
 ios/
 libs/
+proj.android
+proj.ios
+proj.mac
+proj.win32
 

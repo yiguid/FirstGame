@@ -1,129 +1,131 @@
-//
-//  GameObjHero.cpp
-//  example11-1
-//
-//  Created by shuoquan man on 12-10-14.
-//  Copyright (c) 2012å¹´ __MyCompanyName__. All rights reserved.
-//
 #include "GameObjHero.h"
-#include "GameScene.h"
-#include "GameHeroBullet.h"
+#include "GameMainScene.h"
+
 GameObjHero::GameObjHero(void)
 {
 }
 
+
 GameObjHero::~GameObjHero(void)
 {
 }
-CCRect GameObjHero::rect()
-{
-    CCSize s = CCSizeMake(85,90);
-    return CCRectMake(-s.width / 2, -s.height / 2, s.width, s.height);
-}
-void GameObjHero::touchDelegateRetain()
-{
-    this->retain();
-}
 
-void GameObjHero::touchDelegateRelease()
-{
-    this->release();
-}
 void GameObjHero::onEnter()
 {
-    CCNode::onEnter();
-    this->setContentSize(CCSizeMake(85,90));
-    CCDirector* pDirector = CCDirector::sharedDirector();
-    pDirector->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
-    CCSprite *mainsprite = CCSprite::create("catBody1.png");
-    //ä¸»ä½“åŠ¨ç”»
-    CCAnimation* animation = CCAnimation::create();
-    animation->addSpriteFrameWithFileName("catBody1.png");
-    animation->addSpriteFrameWithFileName("catBody2-4.png");
-    animation->addSpriteFrameWithFileName("catBody3.png");
-    animation->addSpriteFrameWithFileName("catBody2-4.png");
-    animation->setDelayPerUnit(0.1f);
-    animation->setRestoreOriginalFrame(true);
-    mainsprite->runAction(CCRepeatForever::create(CCAnimate::create(animation)));
-    addChild(mainsprite);
-    //å°¾å·´
-    CCSprite *tail = CCSprite::create("catTail.png");
-    tail->setAnchorPoint(ccp(0.5,1));
-    tail->setPosition(ccp(-5,-29));
-    tail->setScale(0.5);
-    tail->setRotation(20);
-    tail->runAction(CCRepeatForever::create((CCActionInterval*)CCSequence::create(CCRotateBy::create(0.5,-40),CCRotateBy::create(0.5,40),NULL)));
-    addChild(tail);
-    //æ‰‹
-    lefthand = CCSprite::create("catHand1.png");
-    lefthand->setAnchorPoint(ccp(1,0.5));
-    lefthand->setPosition(ccp(-18,-20));
-    addChild(lefthand);
-    righthand = CCSprite::create("catHand2.png");
-    righthand->setPosition(ccp(18,-20));
-    righthand->setAnchorPoint(ccp(0,0.5));
-    addChild(righthand);
-    offset = ccp(0,0);
-    iscontrol = false;
-    schedule(schedule_selector(GameObjHero::releasebullet), 1.0f);
+	CCNode::onEnter();
+	this->setContentSize(CCSizeMake(85,90));
+	CCDirector* pDirector = CCDirector::sharedDirector();
+	pDirector->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
+	CCSprite *mainsprite = CCSprite::create("catBody1.png");
+	//Ö÷Ìå¶¯»­
+	CCAnimation* animation = CCAnimation::create();
+	animation->addSpriteFrameWithFileName("catBody1.png");
+	animation->addSpriteFrameWithFileName("catBody2-4.png");
+	animation->addSpriteFrameWithFileName("catBody3.png");
+	animation->addSpriteFrameWithFileName("catBody2-4.png");
+	animation->setDelayPerUnit(0.1f);
+	animation->setRestoreOriginalFrame(true);
+	mainsprite->runAction(CCRepeatForever::create(CCAnimate::create(animation)));
+	this->addChild(mainsprite);
+	//Î²°Í
+	CCSprite *tail = CCSprite::create("catTail.png");
+ 	tail->setAnchorPoint(ccp(0.5,1));
+ 	tail->setPosition(ccp(-5,-29));
+	tail->setScale(0.5);
+	tail->setRotation(20);
+	tail->runAction(CCRepeatForever::create((CCActionInterval*)CCSequence::create(CCRotateBy::create(0.5,-40),CCRotateBy::create(0.5,40),NULL)));
+	this->addChild(tail);
+	//ÊÖ
+	m_leftHand = CCSprite::create("catHand1.png");
+	m_leftHand->setAnchorPoint(ccp(1,0.5));
+	m_leftHand->setPosition(ccp(-18,-20));
+	this->addChild(m_leftHand);
+	m_rightHand = CCSprite::create("catHand2.png");
+	m_rightHand->setPosition(ccp(18,-20));
+	m_rightHand->setAnchorPoint(ccp(0,0.5));
+	this->addChild(m_rightHand);
+	m_offset = ccp(0,0);
+	m_isControl = false;
+	schedule(schedule_selector(GameObjHero::releasebullet), 0.5f);
 }
-void GameObjHero::releasebullet(){
-    //é‡Šæ”¾å­å¼¹
-    if(iscontrol){
-       CCPoint pos = this->getPosition(); 
-       GameMain *p = (GameMain *) this->getParent();
-        p->releaseheroBullet(pos.x,pos.y + 30);
-    }
-}
+
 void GameObjHero::onExit()
 {
-    CCDirector* pDirector = CCDirector::sharedDirector();
-    pDirector->getTouchDispatcher()->removeDelegate(this);
-    CCNode::onExit();
-}    
+	CCNode::onExit();
+}
+
+CCRect GameObjHero::rect()
+{
+	CCSize s = CCSizeMake(85,90);
+	return CCRectMake(-s.width / 2, -s.height / 2, s.width, s.height);
+	//´Ó×óÏÂ½Çµ½ÓÒÉÏ½ÇµÄ¾ØĞÎÇøÓò
+}
+
 bool GameObjHero::containsTouchLocation(CCTouch* touch)
 {
-    return rect().containsPoint(convertTouchToNodeSpaceAR(touch));
+	return rect().containsPoint(convertTouchToNodeSpaceAR(touch));
 }
-bool GameObjHero::ccTouchBegan(CCTouch* touch, CCEvent* event)
+
+bool GameObjHero::ccTouchBegan( CCTouch* touch, CCEvent* event )
 {
-    if(((GameMain *)this->getParent())->isover)
-        return false;
-    if(! containsTouchLocation(touch)){
-        return false; 
-    }else{
-        //è·å¾—è§¦æ‘¸åç§»ä½ç½®
-        iscontrol = true;
-        CCPoint touchPoint = touch->getLocationInView();
-        touchPoint = CCDirector::sharedDirector()->convertToGL(touchPoint);
-        offset.x = touchPoint.x - this->getPosition().x;
-        offset.y = touchPoint.y - this->getPosition().y;
-    }
-    return true;   
+ 	if(((GameMainScene *)this->getParent())->m_isGameOver)//ÓÎÏ·½áÊø£¬²»ÔÚ½ÓÊÜ´¥ÆÁÊÂ¼ş
+	{
+ 		return false;
+	}
+	if(! containsTouchLocation(touch))//Èç¹û´¥ÆÁµãÃ»ÓĞÔÚÓ¢ĞÛÍ¼Æ¬µÄ¾ØĞÎÖĞ
+	{
+		return false; 
+	}
+	else//»ñµÃ´¥ÃşÆ«ÒÆÎ»ÖÃ
+	{
+		m_isControl = true;
+		CCPoint touchPoint = touch->getLocationInView();
+		touchPoint = CCDirector::sharedDirector()->convertToGL(touchPoint);
+		m_offset.x = touchPoint.x - this->getPosition().x;
+		m_offset.y = touchPoint.y - this->getPosition().y;
+	}
+	return true;   
 }
-void GameObjHero::ccTouchMoved(CCTouch* touch, CCEvent* event)
+
+void GameObjHero::ccTouchMoved( CCTouch* touch, CCEvent* event )
 {
-    if(iscontrol){
-      CCPoint touchPoint = touch->getLocationInView();
-      touchPoint = CCDirector::sharedDirector()->convertToGL(touchPoint);
-      //è®¾ç½®å·¦å³æ‰‹ä¸Šä¸‹
-      float x = touchPoint.x - offset.x; 
-      float y = touchPoint.y - offset.y;
-      if(x < this->getPosition().x){
-          lefthand->setFlipY(true);
-          righthand->setFlipY(false);
-      }else{
-          lefthand->setFlipY(false);
-          righthand->setFlipY(true); 
-      }
-      this->setPosition(x,y);
-    }
+	if(m_isControl)
+	{
+		CCPoint touchPoint = touch->getLocationInView();
+		touchPoint = CCDirector::sharedDirector()->convertToGL(touchPoint);
+		//ÉèÖÃ×óÓÒÊÖÉÏÏÂ
+		float x = touchPoint.x - m_offset.x; 
+		float y = touchPoint.y - m_offset.y;
+		if(x < this->getPosition().x)
+		{
+			m_leftHand->setFlipY(true);//ÊÖÑïÆğÀ´
+			m_rightHand->setFlipY(false);
+		}
+		else
+		{
+			m_leftHand->setFlipY(false);
+			m_rightHand->setFlipY(true); 
+		}
+		this->setPosition(x,y);
+	}
 }
-void GameObjHero::ccTouchEnded(CCTouch* touch, CCEvent* event)
+
+void GameObjHero::ccTouchEnded( CCTouch* touch, CCEvent* event )
 {
-    if(iscontrol){
-       iscontrol = false;
-       lefthand->setFlipY(false);
-       righthand->setFlipY(false);
-    }
+	if(m_isControl)
+	{
+		m_isControl = false;
+		m_leftHand->setFlipY(false);
+		m_rightHand->setFlipY(false); 
+	}
+}
+
+void GameObjHero::releasebullet( float dt )
+{
+	if(m_isControl)//ÊÍ·Å×Óµ¯
+	{
+		CCPoint pos = this->getPosition(); 
+		GameMainScene *p = (GameMainScene*) this->getParent();
+		p->releaseHeroBullet(pos.x,pos.y + 30);
+	}
 }
