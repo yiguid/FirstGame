@@ -17,8 +17,9 @@ void GameObjEnemy::onEnter()
 	this->setContentSize(CCSizeMake(99,115));
 	m_mainBody = CCSprite::create("DrDog1.png");
 	CCAnimation* animation = CCAnimation::create();
-	animation->addSpriteFrameWithFileName("DrDog1.png");
-	animation->addSpriteFrameWithFileName("DrDog2.png");
+	animation->addSpriteFrameWithFileName("Doraemon1.png");
+	animation->addSpriteFrameWithFileName("Doraemon2.png");
+	animation->addSpriteFrameWithFileName("Doraemon3.png");
 	animation->setDelayPerUnit(0.1f);
 	animation->setRestoreOriginalFrame(true);
 	m_mainBody->runAction(CCRepeatForever::create(CCAnimate::create(animation)));
@@ -61,7 +62,8 @@ void GameObjEnemy::moveStart()
 		this->runAction(CCSequence::create(bezierBy1,CCCallFuncN::create(this, callfuncN_selector(GameObjEnemy::reStart)),NULL));
 		break;
 	}
-	schedule(schedule_selector(GameObjEnemy::releaseBullet), 1.2f);
+	float shootinterval = CCRANDOM_0_1() * 0.5 + 0.5;
+	schedule(schedule_selector(GameObjEnemy::releaseBullet), shootinterval);
 }
 
 void GameObjEnemy::reStart( CCNode* pSender )

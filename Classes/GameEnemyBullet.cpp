@@ -34,7 +34,8 @@ void GameEnemyBullet::setIsVisable()
 	this->setVisible(true);
 	m_isVisable = true;
 	this->runAction(CCRepeatForever::create(CCRotateBy::create(1,360)));
-	this->runAction(CCSequence::create(CCMoveTo::create((this->getPosition().y + 50)/150,ccp(this->getPosition().x,-50)),CCCallFuncN::create(this, callfuncN_selector(GameEnemyBullet::setIsNotVisable)),NULL));;
+	int speed = CCRANDOM_0_1() * 500 + 250;
+	this->runAction(CCSequence::create(CCMoveTo::create((this->getPosition().y + 50)/speed,ccp(this->getPosition().x,-50)),CCCallFuncN::create(this, callfuncN_selector(GameEnemyBullet::setIsNotVisable)),NULL));;
 }
 
 void GameEnemyBullet::setIsNotVisable(CCNode* pSender)

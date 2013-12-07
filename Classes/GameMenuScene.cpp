@@ -4,6 +4,8 @@
 #include "SimpleAudioEngine.h"
 using namespace cocos2d;
 
+#define GAMEBACKGROUNDMUSIC "music.mp3"
+
 GameMenuScene::GameMenuScene(void)
 {
 	m_isSound = false;
@@ -51,7 +53,7 @@ bool GameMenuScene::init()
 	this->addChild(title,2,2);
 
 	//初始化按钮
-	CCMenuItemImage *newGameItem = CCMenuItemImage::create("newgameA.png", "newgameB.png",this,menu_selector(GameMenuScene::menuNewGameCallback));
+	CCMenuItemImage *newGameItem = CCMenuItemImage::create("newGameA.png", "newGameB.png",this,menu_selector(GameMenuScene::menuNewGameCallback));
 	newGameItem->setScale(0.5);
 	newGameItem->setPosition(ccp(size.width / 2,size.height / 2 - 20));
 	newGameItem->setEnabled(false);
@@ -80,9 +82,9 @@ bool GameMenuScene::init()
 	this->addChild(mainmenu,1,3);
 
 	m_isSound = true;//是否开启声音参数
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic( CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3").c_str() );
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(0.5);
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3").c_str(), true);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic( CCFileUtils::sharedFileUtils()->fullPathForFilename(GAMEBACKGROUNDMUSIC).c_str() );
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(GAMEBACKGROUNDMUSIC).c_str(), true);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(1);
 	return true;
 }
 
@@ -153,7 +155,7 @@ void GameMenuScene::menuSoundCallback( CCObject* pSender )
 	{
 		m_soundItem->setNormalImage(CCSprite::create("sound-on-A.png"));
 		m_soundItem->setDisabledImage(CCSprite::create("sound-on-B.png"));
-		CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename("background.mp3").c_str(), true);
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(GAMEBACKGROUNDMUSIC).c_str(), true);
 		m_isSound = true;
 	}
 	else

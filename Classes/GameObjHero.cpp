@@ -46,7 +46,7 @@ void GameObjHero::onEnter()
 	this->addChild(m_rightHand);
 	m_offset = ccp(0,0);
 	m_isControl = false;
-	schedule(schedule_selector(GameObjHero::releasebullet), 0.5f);
+	schedule(schedule_selector(GameObjHero::releasebullet), 0.2f);
 }
 
 void GameObjHero::onExit()

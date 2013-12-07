@@ -12,7 +12,7 @@ void GameHeroBullet::setIsVisable()
 {
 	this->setVisible(true);
 	m_isVisable = true;
-	this->runAction(CCSequence::create(CCMoveTo::create((-this->getPosition().y + 550)/150,ccp(this->getPosition().x,550)),CCCallFuncN::create(this, callfuncN_selector(GameHeroBullet::setIsNotVisable)),NULL));;
+	this->runAction(CCSequence::create(CCMoveTo::create((-this->getPosition().y + 960)/1000,ccp(this->getPosition().x,960)),CCCallFuncN::create(this, callfuncN_selector(GameHeroBullet::setIsNotVisable)),NULL));;
 }
 void GameHeroBullet::setIsNotVisable(CCNode* pSender)
 {

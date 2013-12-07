@@ -3,8 +3,10 @@
 #include "GameHeroBullet.h"
 #include "GameEnemyBullet.h"
 #include "GameObjEnemy.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+using namespace CocosDenshion;
 GameMainScene::GameMainScene(void)
 {
 }
@@ -47,13 +49,14 @@ bool GameMainScene::init()
 	m_hero->runAction(CCMoveBy::create(0.5,ccp(0,150)));
 
 	//创建敌人
-	m_enemys = CCArray::createWithCapacity(3);
-	for(int i = 0;i < 3;i ++)
+	m_enemys = CCArray::createWithCapacity(6);
+	for(int i = 0;i < 6;i ++)
 	{
-		int type = i + 1;
+		int type = CCRANDOM_0_1() * 4;
 		GameObjEnemy* enemy = new GameObjEnemy();
 		enemy->setPosition(ccp(size.width/4 * type,size.height + 50));
-		enemy->setScale(0.5);
+		float enemyScale = CCRANDOM_0_1() * 0.5 + 0.35;
+		enemy->setScale(enemyScale);
 		enemy->setType(type);
 		m_enemys->addObject(enemy);
 		this->addChild(enemy,1);
@@ -79,7 +82,7 @@ bool GameMainScene::init()
 	addChild(ui,4);
 
 	//初始化主角子弹
- 	m_heroBullets = CCArray::createWithCapacity(30);
+ 	m_heroBullets = CCArray::createWithCapacity(100);
  	for(size_t i = 0;i < m_heroBullets->capacity();i ++)
  	{
  		GameHeroBullet * mybullet = new GameHeroBullet();
@@ -102,7 +105,12 @@ bool GameMainScene::init()
  	m_enemyBullets->retain();
 	m_gameMark = new GameMark();
 	this->addChild(m_gameMark,4);
-	
+	//preload effect music
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("bullet.mp3").c_str());
+	SimpleAudioEngine::sharedEngine()->setEffectsVolume(0.2);
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
+	SimpleAudioEngine::sharedEngine()->setEffectsVolume(0.5);
+
 	//初始化游戏结束弹板及按钮
 	m_gameOver = CCSprite::create("gameover.png");
 	m_gameOver->setAnchorPoint(ccp(0.5,0.5));
@@ -151,6 +159,7 @@ void GameMainScene::releaseHeroBullet( int x,int y )
 			//设置位置，并设置为显示
 			((GameHeroBullet *)m_heroBullets->objectAtIndex(i))->setPosition(ccp(x,y));
 			((GameHeroBullet *)m_heroBullets->objectAtIndex(i))->setIsVisable();
+			SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("bullet.mp3").c_str());
 			break; 
 		}
 	}
@@ -186,6 +195,8 @@ void GameMainScene::update( float time )
  				{
  					if(isHit(((GameHeroBullet *)m_heroBullets->objectAtIndex(i))->getPosition(),epos,5,13,21,28))
  					{
+						//play sound
+						SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
  						enemy->setDie();
  						m_gameMark->addNumber(200);
  						break;
@@ -196,6 +207,7 @@ void GameMainScene::update( float time )
 		//敌人和英雄碰撞
 		if(!m_isReduce && enemy->m_isLife && isHit(hpos,epos,21,22.5,21,28))
 		{
+			SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
 			enemy->setDie();
 			setHeroHurt();
 		}
@@ -207,6 +219,7 @@ void GameMainScene::update( float time )
 		{
 			if(isHit(hpos,((GameEnemyBullet *)m_enemyBullets->objectAtIndex(i))->getPosition(),21,22.5,5,13))
 			{
+				SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
 				setHeroHurt();
 			}
 		}
@@ -270,7 +283,7 @@ void GameMainScene::setHeroHurt()
 
 void GameMainScene::resetReduce( float dt )
 {
-	m_isReduce = false;//重新能收到伤害
+	m_isReduce = false;//重新能受到伤害
 }
 void GameMainScene::setGameOver()
 {
