@@ -14,12 +14,10 @@ void GameObjEnemy::onEnter()
 {
 	CCNode::onEnter();
 
-	this->setContentSize(CCSizeMake(99,115));
-	m_mainBody = CCSprite::create("DrDog1.png");
+	this->setContentSize(CCSizeMake(100,100));
+	m_mainBody = CCSprite::create("tempest.png");
 	CCAnimation* animation = CCAnimation::create();
-	animation->addSpriteFrameWithFileName("Doraemon1.png");
-	animation->addSpriteFrameWithFileName("Doraemon2.png");
-	animation->addSpriteFrameWithFileName("Doraemon3.png");
+	animation->addSpriteFrameWithFileName("tempest.png");
 	animation->setDelayPerUnit(0.1f);
 	animation->setRestoreOriginalFrame(true);
 	m_mainBody->runAction(CCRepeatForever::create(CCAnimate::create(animation)));

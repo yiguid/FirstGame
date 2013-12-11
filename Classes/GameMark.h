@@ -13,6 +13,7 @@ public:
 	virtual void onEnter();
 	virtual void onExit();
 	void addNumber(int var);
+	int getScore();
 	CREATE_FUNC(GameMark);
 private:
 	int m_score;

@@ -31,10 +31,10 @@ bool GameMainScene::init()
 {
 	CCSize size = CCDirector::sharedDirector()->getWinSize();    
 	//创建背景
-	m_bg1 = CCSprite::create("bg.png");
-	m_bg1->setScale(0.5);
-	m_bg2 = CCSprite::create("bg.png");
-	m_bg2->setScale(0.5);
+	m_bg1 = CCSprite::create("back-1.png");
+	m_bg1->setScale(1);
+	m_bg2 = CCSprite::create("back-2.png");
+	m_bg2->setScale(1);
 	m_bg1->setAnchorPoint(ccp(0,0));//设置锚点
 	m_bg2->setAnchorPoint(ccp(0,0));
 	m_bg1->setPosition( ccp(0,0) );
@@ -44,7 +44,7 @@ bool GameMainScene::init()
 	//创建主角
 	m_hero = new GameObjHero();
 	m_hero->setPosition(ccp(size.width/2,-50));
-	m_hero->setScale(0.5);
+	m_hero->setScale(0.7);
 	this->addChild(m_hero,2,1);
 	m_hero->runAction(CCMoveBy::create(0.5,ccp(0,150)));
 
@@ -55,7 +55,7 @@ bool GameMainScene::init()
 		int type = CCRANDOM_0_1() * 4;
 		GameObjEnemy* enemy = new GameObjEnemy();
 		enemy->setPosition(ccp(size.width/4 * type,size.height + 50));
-		float enemyScale = CCRANDOM_0_1() * 0.5 + 0.35;
+		float enemyScale = CCRANDOM_0_1() * 0.5 + 0.5;
 		enemy->setScale(enemyScale);
 		enemy->setType(type);
 		m_enemys->addObject(enemy);
@@ -65,7 +65,7 @@ bool GameMainScene::init()
 	m_enemys->retain();
 	//创建血量ui
 	m_blood = 3;
-	CCSpriteBatchNode* ui = CCSpriteBatchNode::create("cat.png");
+	CCSpriteBatchNode* ui = CCSpriteBatchNode::create("viking.png");
 	//CCNode *ui = CCNode::create();
 	m_blood1 = CCSprite::createWithTexture(ui->getTexture());
 	m_blood1->setPosition(ccp(20,size.height - 20));
@@ -128,10 +128,59 @@ bool GameMainScene::init()
 	this->addChild(pMenu,5,25);
 	pMenu->setVisible(false);
 	pMenu->setEnabled(false);
+	//暂停按钮
+	CCMenuItemImage *pPauseItem = CCMenuItemImage::create("backB.png","backA.png",
+		this,menu_selector(GameMainScene::onPause));
+	pPauseItem->setPosition(ccp(size.width - 50,size.height - 50));
+	pPauseItem->setScale(0.5);
+	CCMenu *pPauseMenu = CCMenu::create(pPauseItem,NULL);
+	pPauseMenu->setPosition(CCPointZero);
+	this->addChild(pPauseMenu,6,26);
+
+	CCMenuItemImage *pResumeItem = CCMenuItemImage::create("backB.png","backA.png",
+		this,menu_selector(GameMainScene::onResume));
+	pResumeItem->setPosition(ccp(size.width - 50,size.height - 50));
+	pResumeItem->setScale(0.5);
+	CCMenu *pResumeMenu = CCMenu::create(pResumeItem,NULL);
+	pResumeMenu->setPosition(CCPointZero);
+	this->addChild(pResumeMenu,6,27);
+	pResumeMenu->setVisible(false);
+	pResumeMenu->setEnabled(false);
+
 	m_isReduce = false;
 	m_isGameOver = false;
+	m_isPause = false;
 	scheduleUpdate();
 	return true;
+}
+
+void GameMainScene::onPause( CCObject* pSender )
+{
+	m_isPause = true;
+	CCDirector::sharedDirector()->pause();
+	//禁止移动
+	this->setTouchEnabled(false);
+	//更换按钮
+	CCMenu* pMenu = (CCMenu *)this->getChildByTag(26);
+	pMenu->setVisible(false);
+	pMenu->setEnabled(false);
+	pMenu = (CCMenu *)this->getChildByTag(27);
+	pMenu->setVisible(true);
+	pMenu->setEnabled(true);
+}
+
+void GameMainScene::onResume(CCObject *pSender)
+{
+	m_isPause = false;
+	CCDirector::sharedDirector()->resume();
+	this->setTouchEnabled(true);
+	//更换按钮
+	CCMenu* pMenu = (CCMenu *)this->getChildByTag(27);
+	pMenu->setVisible(false);
+	pMenu->setEnabled(false);
+	pMenu = (CCMenu *)this->getChildByTag(26);
+	pMenu->setVisible(true);
+	pMenu->setEnabled(true);
 }
 
 void GameMainScene::onEnter()
@@ -168,8 +217,8 @@ void GameMainScene::releaseHeroBullet( int x,int y )
 void GameMainScene::update( float time )
 {
 	//背景移动逻辑
-	m_bg1->setPosition(ccp(m_bg1->getPosition().x,m_bg1->getPosition().y - 2));
-	m_bg2->setPosition(ccp(m_bg2->getPosition().x,m_bg2->getPosition().y - 2));
+	m_bg1->setPosition(ccp(m_bg1->getPosition().x,m_bg1->getPosition().y - 1));
+	m_bg2->setPosition(ccp(m_bg2->getPosition().x,m_bg2->getPosition().y - 1));
 	if(m_bg2->getPosition().y < 0)
 	{
 		float temp = m_bg2->getPosition().y + 480;
@@ -296,4 +345,13 @@ void GameMainScene::setGameOver()
 	pMenu->setScale(0);
 	pMenu->runAction(CCScaleTo::create(0.5,1));//0.5秒缩放到正常大小
 	m_gameOver->runAction(CCScaleTo::create(0.5,0.5));//0.5秒缩放到正常大小的0.5倍
+	//保存分数
+	//我们这里简单存储条数据
+	CCUserDefault::sharedUserDefault()->setIntegerForKey("totalScore", m_gameMark->getScore());
+	CCUserDefault::sharedUserDefault()->flush();//这里一定要提交写入哦，否则不会记录到xml中，下次启动游戏你就获取不到value了。
+	//这里随便定义一个string为了验证我们的存储
+	int totalScore= 0;
+	//取出我们刚存储的himi，然后赋值给str验证下；
+	totalScore= CCUserDefault::sharedUserDefault()->getIntegerForKey("totalScore");
+	CCLog("totalScore=：%d",totalScore);
 }
