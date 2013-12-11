@@ -31,9 +31,13 @@ public:
 	void setHeroHurt();
 	void setGameOver();
 	void resetReduce(float dt);
+	void onPause(CCObject *pSender);
+	void onResume(CCObject *pSender);
 
 	bool m_isGameOver;//游戏结束，不在接受触屏事件
 	bool m_isReduce;    //不受伤害
+	bool m_isPause; //是否暂停中
+	
 private:
 	CCSprite* m_blood1;
 	CCSprite* m_blood2;

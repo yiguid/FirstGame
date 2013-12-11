@@ -26,8 +26,8 @@ bool GameMenuScene::init()
 	CCSize size = CCDirector::sharedDirector()->getWinSize();
 
 	 //初始化背景
-	CCSprite* back = CCSprite::create("bg.png");
-	back->setScale(0.5);
+	CCSprite* back = CCSprite::create("back-1.png");
+	back->setScale(1);
 	back->setPosition(ccp(size.width/2,size.height/2));
 	this->addChild(back,0,0);
 
@@ -37,6 +37,18 @@ bool GameMenuScene::init()
 	bgstar->setScale(0.5);
 	bgstar->setPosition(ccp(size.width/3 * 2, 0));
 	this->addChild(bgstar,1,1);
+
+	//init score
+	int totalScore = 0;
+	//取出我们刚存储的score
+	totalScore= CCUserDefault::sharedUserDefault()->getIntegerForKey("totalScore");
+	CCString *score = CCString::createWithFormat("%d",totalScore);
+	CCLabelTTF *pHighScore = CCLabelTTF::create(score->getCString(),"微软雅黑",20);
+	pHighScore->setPosition(ccp(size.width/2+50,size.height/2 + 100));
+	this->addChild(pHighScore);
+	CCLabelTTF *pHighLabel = CCLabelTTF::create("High Score: ","微软雅黑",20);
+	pHighLabel->setPosition(ccp(size.width/2-50,size.height/2 + 100));
+	this->addChild(pHighLabel);
 
 	//初始化标题
 	CCNode* title = CCNode::create();

@@ -41,6 +41,11 @@ void GameMark::onExit()
 	CCNode::onExit();
 }
 
+int GameMark::getScore()
+{
+	return m_score;
+}
+
 void GameMark::addNumber( int var )
 {
 	//分数，按位设置数字
