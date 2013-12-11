@@ -1,6 +1,8 @@
 #include "GameObjHero.h"
 #include "GameMainScene.h"
 
+#define HERO_IMG "plane.png"
+
 GameObjHero::GameObjHero(void)
 {
 }
@@ -16,10 +18,10 @@ void GameObjHero::onEnter()
 	this->setContentSize(CCSizeMake(100,100));
 	CCDirector* pDirector = CCDirector::sharedDirector();
 	pDirector->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
-	CCSprite *mainsprite = CCSprite::create("viking.png");
+	CCSprite *mainsprite = CCSprite::create(HERO_IMG);
 	//主体动画
 	CCAnimation* animation = CCAnimation::create();
-	animation->addSpriteFrameWithFileName("viking.png");
+	animation->addSpriteFrameWithFileName(HERO_IMG);
 	animation->setDelayPerUnit(0.1f);
 	animation->setRestoreOriginalFrame(true);
 	mainsprite->runAction(CCRepeatForever::create(CCAnimate::create(animation)));
@@ -43,6 +45,7 @@ void GameObjHero::onEnter()
 	//this->addChild(m_rightHand);
 	m_offset = ccp(0,0);
 	m_isControl = false;
+	m_allowTouch = true;
 	schedule(schedule_selector(GameObjHero::releasebullet), 0.2f);
 }
 
@@ -65,6 +68,8 @@ bool GameObjHero::containsTouchLocation(CCTouch* touch)
 
 bool GameObjHero::ccTouchBegan( CCTouch* touch, CCEvent* event )
 {
+	if(!m_allowTouch)
+		return false;
  	if(((GameMainScene *)this->getParent())->m_isGameOver)//游戏结束，不在接受触屏事件
 	{
  		return false;

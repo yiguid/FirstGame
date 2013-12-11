@@ -20,6 +20,7 @@ public:
 	bool containsTouchLocation(CCTouch* touch);//ÊÇ·ñ´¥Ãþµ½Ó¢ÐÛ
 	void releasebullet(float dt);
 	CREATE_FUNC(GameObjHero);
+	bool m_allowTouch;
 private:
 	
 	bool m_isControl;

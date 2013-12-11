@@ -20,6 +20,7 @@ public:
 	void releaseBullet(float dt);
 	CREATE_FUNC(GameObjEnemy)
 
+	float m_shootInterval;
 	bool m_isLife;
 private:
 	CCSprite* m_mainBody;

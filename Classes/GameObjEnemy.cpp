@@ -3,6 +3,7 @@
 
 GameObjEnemy::GameObjEnemy(void)
 {
+	m_shootInterval = CCRANDOM_0_1() * 1 + 1;
 }
 
 
@@ -38,20 +39,23 @@ void GameObjEnemy::moveStart()
 	m_isLife = true;
 	int type = CCRANDOM_0_1() * 4;
 	ccBezierConfig bezier2;
-	bezier2.controlPoint_1 = CCPointMake(this->getPosition().x - 400,330);
-	bezier2.controlPoint_2 = CCPointMake(this->getPosition().x + 400,280);
+	int bezierRandom = CCRANDOM_0_1() * 150 + 300;
+	bezier2.controlPoint_1 = CCPointMake(this->getPosition().x - bezierRandom,330);
+	bezier2.controlPoint_2 = CCPointMake(this->getPosition().x + bezierRandom,280);
 	bezier2.endPosition = CCPointMake(this->getPosition().x,-70);
 	CCBezierTo * bezierBy2 = CCBezierTo::create(6, bezier2);
 	ccBezierConfig bezier1;
-	bezier1.controlPoint_1 = CCPointMake(this->getPosition().x + 400,330);
-	bezier1.controlPoint_2 = CCPointMake(this->getPosition().x - 400,280);
+	bezier1.controlPoint_1 = CCPointMake(this->getPosition().x + bezierRandom,330);
+	bezier1.controlPoint_2 = CCPointMake(this->getPosition().x - bezierRandom,280);
 	bezier1.endPosition = CCPointMake(this->getPosition().x,-70);
 	CCBezierTo * bezierBy1 = CCBezierTo::create(6, bezier1);
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+	int duration = CCRANDOM_0_1() * 3 + 5;
 	switch(type)
 	{
 	case 0:
 	case 1:
-		this->runAction(CCSequence::create(CCMoveBy::create(6,ccp(0,-600)),CCCallFuncN::create(this, callfuncN_selector(GameObjEnemy::reStart)),NULL));
+		this->runAction(CCSequence::create(CCMoveBy::create(duration,ccp(0,-size.height)),CCCallFuncN::create(this, callfuncN_selector(GameObjEnemy::reStart)),NULL));
 		break;
 	case 2:
 		this->runAction(CCSequence::create(bezierBy2,CCCallFuncN::create(this, callfuncN_selector(GameObjEnemy::reStart)),NULL));
@@ -60,8 +64,7 @@ void GameObjEnemy::moveStart()
 		this->runAction(CCSequence::create(bezierBy1,CCCallFuncN::create(this, callfuncN_selector(GameObjEnemy::reStart)),NULL));
 		break;
 	}
-	float shootinterval = CCRANDOM_0_1() * 0.5 + 0.5;
-	schedule(schedule_selector(GameObjEnemy::releaseBullet), shootinterval);
+	schedule(schedule_selector(GameObjEnemy::releaseBullet), m_shootInterval);
 }
 
 void GameObjEnemy::reStart( CCNode* pSender )
@@ -69,8 +72,10 @@ void GameObjEnemy::reStart( CCNode* pSender )
 	m_mainBody->setVisible(true);
 	m_boom->setVisible(false);
 	CCSize size = CCDirector::sharedDirector()->getWinSize();
-	this->setPosition(ccp(size.width/4 * m_type,size.height + 50));
+	this->setPosition(ccp(size.width/4 * (m_type + 1) + 50,size.height + 50));
 	m_isLife = true;
+	if(m_shootInterval - 0.02 > 0)
+		m_shootInterval -= 0.02;
 	this->moveStart();
 }
 

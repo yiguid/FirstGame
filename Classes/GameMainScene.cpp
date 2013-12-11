@@ -5,6 +5,8 @@
 #include "GameObjEnemy.h"
 #include "SimpleAudioEngine.h"
 
+#define HERO_IMG "plane.png"
+
 USING_NS_CC;
 using namespace CocosDenshion;
 GameMainScene::GameMainScene(void)
@@ -44,17 +46,17 @@ bool GameMainScene::init()
 	//创建主角
 	m_hero = new GameObjHero();
 	m_hero->setPosition(ccp(size.width/2,-50));
-	m_hero->setScale(0.7);
+	m_hero->setScale(0.5);
 	this->addChild(m_hero,2,1);
 	m_hero->runAction(CCMoveBy::create(0.5,ccp(0,150)));
 
 	//创建敌人
-	m_enemys = CCArray::createWithCapacity(6);
-	for(int i = 0;i < 6;i ++)
+	m_enemys = CCArray::createWithCapacity(10);
+	for(int i = 0;i < 10;i ++)
 	{
 		int type = CCRANDOM_0_1() * 4;
 		GameObjEnemy* enemy = new GameObjEnemy();
-		enemy->setPosition(ccp(size.width/4 * type,size.height + 50));
+		enemy->setPosition(ccp(size.width/4 * (type + 1) + 50,size.height + 50));
 		float enemyScale = CCRANDOM_0_1() * 0.5 + 0.5;
 		enemy->setScale(enemyScale);
 		enemy->setType(type);
@@ -64,13 +66,13 @@ bool GameMainScene::init()
 	}
 	m_enemys->retain();
 	//创建血量ui
-	m_blood = 3;
-	CCSpriteBatchNode* ui = CCSpriteBatchNode::create("viking.png");
+	m_blood = 2;
+	CCSpriteBatchNode* ui = CCSpriteBatchNode::create(HERO_IMG);
 	//CCNode *ui = CCNode::create();
-	m_blood1 = CCSprite::createWithTexture(ui->getTexture());
-	m_blood1->setPosition(ccp(20,size.height - 20));
-	m_blood1->setScale(0.2f);
-	ui->addChild(m_blood1);
+	//m_blood1 = CCSprite::createWithTexture(ui->getTexture());
+	//m_blood1->setPosition(ccp(20,size.height - 20));
+	//m_blood1->setScale(0.2f);
+	//ui->addChild(m_blood1);
 	m_blood2 = CCSprite::createWithTexture(ui->getTexture());
 	m_blood2->setPosition(ccp(50,size.height - 20));
 	m_blood2->setScale(0.2f);
@@ -160,6 +162,8 @@ void GameMainScene::onPause( CCObject* pSender )
 	CCDirector::sharedDirector()->pause();
 	//禁止移动
 	this->setTouchEnabled(false);
+	//暂停声音
+	SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 	//更换按钮
 	CCMenu* pMenu = (CCMenu *)this->getChildByTag(26);
 	pMenu->setVisible(false);
@@ -174,6 +178,7 @@ void GameMainScene::onResume(CCObject *pSender)
 	m_isPause = false;
 	CCDirector::sharedDirector()->resume();
 	this->setTouchEnabled(true);
+	SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 	//更换按钮
 	CCMenu* pMenu = (CCMenu *)this->getChildByTag(27);
 	pMenu->setVisible(false);
@@ -195,6 +200,8 @@ void GameMainScene::onExit()
 
 void GameMainScene::menuBackCallback( CCObject* pSender )
 {
+	if(CCDirector::sharedDirector()->isPaused())
+		CCDirector::sharedDirector()->resume();
 	CCDirector::sharedDirector()->replaceScene(GameMenuScene::scene());
 }
 
@@ -244,8 +251,8 @@ void GameMainScene::update( float time )
  				{
  					if(isHit(((GameHeroBullet *)m_heroBullets->objectAtIndex(i))->getPosition(),epos,5,13,21,28))
  					{
-						//play sound
-						SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
+						//play sound 应该移到setDie里面去
+						//SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
  						enemy->setDie();
  						m_gameMark->addNumber(200);
  						break;
@@ -345,6 +352,9 @@ void GameMainScene::setGameOver()
 	pMenu->setScale(0);
 	pMenu->runAction(CCScaleTo::create(0.5,1));//0.5秒缩放到正常大小
 	m_gameOver->runAction(CCScaleTo::create(0.5,0.5));//0.5秒缩放到正常大小的0.5倍
+	m_hero->setVisible(false);
+	m_hero->m_allowTouch = false;
+	this->removeChild(m_hero);
 	//保存分数
 	//我们这里简单存储条数据
 	CCUserDefault::sharedUserDefault()->setIntegerForKey("totalScore", m_gameMark->getScore());

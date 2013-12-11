@@ -69,13 +69,13 @@ bool GameMenuScene::init()
 	newGameItem->setScale(0.5);
 	newGameItem->setPosition(ccp(size.width / 2,size.height / 2 - 20));
 	newGameItem->setEnabled(false);
-	CCMenuItemImage *continueItem = CCMenuItemImage::create("continueA.png", "continueB.png",this,menu_selector(GameMenuScene::menuContinueCallback));
-	continueItem->setScale(0.5);
-	continueItem->setPosition(ccp(size.width / 2,size.height / 2 - 80));
-	continueItem->setEnabled(false);
+	//CCMenuItemImage *continueItem = CCMenuItemImage::create("continueA.png", "continueB.png",this,menu_selector(GameMenuScene::menuContinueCallback));
+	//continueItem->setScale(0.5);
+	//continueItem->setPosition(ccp(size.width / 2,size.height / 2 - 80));
+	//continueItem->setEnabled(false);
 	CCMenuItemImage *aboutItem = CCMenuItemImage::create("aboutA.png", "aboutB.png",this,menu_selector(GameMenuScene::menuAboutCallback));
 	aboutItem->setScale(0.5);
-	aboutItem->setPosition(ccp(size.width / 2,size.height / 2 - 140));
+	aboutItem->setPosition(ccp(size.width / 2,size.height / 2 - 100));
 	aboutItem->setEnabled(false);
 	m_soundItem = CCMenuItemImage::create("sound-on-A.png", "sound-on-B.png",this,menu_selector(GameMenuScene::menuSoundCallback));
 	m_soundItem->setScale(0.5);
@@ -89,7 +89,7 @@ bool GameMenuScene::init()
 		menu_selector(GameMenuScene::menuCloseCallback));
 	pCloseItem->setPosition(ccp(size.width - 20, 20));
 	//使用按钮创建菜单
-	CCMenu* mainmenu = CCMenu::create(newGameItem,continueItem,aboutItem,m_soundItem,pCloseItem,NULL);
+	CCMenu* mainmenu = CCMenu::create(newGameItem,aboutItem,m_soundItem,pCloseItem,NULL);
 	mainmenu->setPosition(ccp(0,0));
 	this->addChild(mainmenu,1,3);
 
