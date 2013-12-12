@@ -51,19 +51,25 @@ bool GameMainScene::init()
 	m_hero->runAction(CCMoveBy::create(0.5,ccp(0,150)));
 
 	//创建敌人
-	m_enemys = CCArray::createWithCapacity(10);
-	for(int i = 0;i < 10;i ++)
+	m_enemys = CCArray::createWithCapacity(20);
+	for(int i = 0;i < 20;i ++)
 	{
 		int type = CCRANDOM_0_1() * 4;
 		GameObjEnemy* enemy = new GameObjEnemy();
-		enemy->setPosition(ccp(size.width/4 * (type + 1) + 50,size.height + 50));
+		enemy->setPosition(ccp(size.width/4 * (type + 1) - 30,size.height + 50));
 		float enemyScale = CCRANDOM_0_1() * 0.25 + 0.2;
 		enemy->setScale(enemyScale);
 		enemy->setType(type);
 		m_enemys->addObject(enemy);
 		this->addChild(enemy,1);
-		enemy->moveStart();
+		//enemy->moveStart();
 	}
+	m_totalEnemy = 0;
+	m_maxEnemy = 3;
+	m_addEnemy = 0;
+	m_levelupEnemy = 30;
+	this->releaseEnemy();
+
 	m_enemys->retain();
 	//创建血量ui
 	m_blood = 2;
@@ -95,7 +101,7 @@ bool GameMainScene::init()
  	}
  	m_heroBullets->retain();//计数器+1
  	//初始化敌人子弹
- 	m_enemyBullets = CCArray::createWithCapacity(10);
+ 	m_enemyBullets = CCArray::createWithCapacity(50);
  	for(size_t i = 0;i < m_enemyBullets->capacity();i ++)
  	{
  		GameEnemyBullet * mybullet = new GameEnemyBullet();
@@ -223,6 +229,8 @@ void GameMainScene::releaseHeroBullet( int x,int y )
 
 void GameMainScene::update( float time )
 {
+	CCLOG("total: %d",m_totalEnemy);
+	CCLOG("max: %d",m_maxEnemy);
 	//背景移动逻辑
 	m_bg1->setPosition(ccp(m_bg1->getPosition().x,m_bg1->getPosition().y - 2));
 	m_bg2->setPosition(ccp(m_bg2->getPosition().x,m_bg2->getPosition().y - 2));
@@ -254,7 +262,16 @@ void GameMainScene::update( float time )
  					{
 						//play sound 应该移到setDie里面去
 						//SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
- 						enemy->setDie();
+						m_totalEnemy--;
+						//累积杀死levelup个敌人就总数加1
+						m_addEnemy++;
+						if(m_addEnemy > m_levelupEnemy)
+						{
+							m_maxEnemy++;
+							m_addEnemy = 0;
+						}
+						this->releaseEnemy();
+						enemy->setDie();
 						pBullet->setPosition(ccp(pBullet->getPosition().x,640));
 						pBullet->setIsNotVisable(pBullet);
  						m_gameMark->addNumber(200);
@@ -267,6 +284,8 @@ void GameMainScene::update( float time )
 		if(!m_isReduce && enemy->m_isLife && isHit(hpos,epos,21,22.5,21,28))
 		{
 			SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
+			m_totalEnemy--;
+			this->releaseEnemy();
 			enemy->setDie();
 			setHeroHurt();
 		}
@@ -295,6 +314,23 @@ void GameMainScene::releaseEnemyBullet( int x,int y )
 			((GameEnemyBullet*)m_enemyBullets->objectAtIndex(i))->setIsVisable();
 			break; 
 		}
+	}
+}
+
+void GameMainScene::releaseEnemy()
+{
+	
+	for(unsigned int i = 0; i < m_enemys->capacity();i++)
+	{
+		GameObjEnemy *enemy = (GameObjEnemy *)m_enemys->objectAtIndex(i);
+		if(enemy->m_isLife == false)
+		{
+			enemy->m_isLife = true;
+			enemy->moveStart();
+			m_totalEnemy++;
+		}
+		if(m_totalEnemy >= m_maxEnemy)
+			break;
 	}
 }
 

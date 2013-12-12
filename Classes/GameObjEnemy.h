@@ -15,6 +15,7 @@ public:
 	
 	void moveStart();
 	void reStart(CCNode* pSender);
+	void reBorn(CCNode* pSender);
 	void setDie();
 	void setType(int type);
 	void releaseBullet(float dt);

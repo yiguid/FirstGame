@@ -27,6 +27,7 @@ public:
 
 	void releaseHeroBullet(int x,int y);
 	void releaseEnemyBullet(int x,int y);
+	void releaseEnemy();
 	bool isHit(CCPoint p1,CCPoint p2,int w1,int h1,int w2,int h2);
 	void setHeroHurt();
 	void setGameOver();
@@ -37,6 +38,10 @@ public:
 	bool m_isGameOver;//游戏结束，不在接受触屏事件
 	bool m_isReduce;    //不受伤害
 	bool m_isPause; //是否暂停中
+	int m_totalEnemy; //画面中敌人数量
+	int m_addEnemy; //累积杀死敌人数，用于升级
+	int m_levelupEnemy; //达到多少个敌人数时升级
+	int m_maxEnemy; //最大的敌人数量
 	
 private:
 	CCSprite* m_blood1;

@@ -28,7 +28,8 @@ void GameHeroBullet::onEnter()
 	CCNode::onEnter();
 
 	this->setContentSize(CCSizeMake(21,52));
-	CCSprite *mainbody = CCSprite::create("YuGuZD.png");
+	CCSprite *mainbody = CCSprite::create("bullet2.png");
+	mainbody->setScale(2);
 	this->addChild(mainbody);
 }
 void GameHeroBullet::onExit()

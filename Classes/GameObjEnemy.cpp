@@ -1,10 +1,10 @@
 #include "GameObjEnemy.h"
 #include "GameMainScene.h"
-#define ENEMY_IMG "enemy.png"
 
 GameObjEnemy::GameObjEnemy(void)
 {
-	m_shootInterval = CCRANDOM_0_1() * 2 + 2;
+	m_shootInterval = CCRANDOM_0_1() * 3 + 3;
+	m_isLife = false;
 }
 
 
@@ -15,11 +15,19 @@ GameObjEnemy::~GameObjEnemy(void)
 void GameObjEnemy::onEnter()
 {
 	CCNode::onEnter();
-
+	
 	this->setContentSize(CCSizeMake(100,100));
-	m_mainBody = CCSprite::create(ENEMY_IMG);
+	int img = CCRANDOM_0_1() * 3;
+	char *enemyImg = "enemy0.png";
+	if(img == 0)
+		enemyImg = "enemy.png";
+	else if(img == 1)
+		enemyImg = "enemy1.png";
+	else
+		enemyImg = "enemy2.png";
+	m_mainBody = CCSprite::create(enemyImg);
 	CCAnimation* animation = CCAnimation::create();
-	animation->addSpriteFrameWithFileName(ENEMY_IMG);
+	animation->addSpriteFrameWithFileName(enemyImg);
 	animation->setDelayPerUnit(0.1f);
 	animation->setRestoreOriginalFrame(true);
 	m_mainBody->runAction(CCRepeatForever::create(CCAnimate::create(animation)));
@@ -27,7 +35,6 @@ void GameObjEnemy::onEnter()
 	m_boom = CCSprite::create("boom1.png");
 	this->addChild(m_boom);
 	m_boom->setVisible(false);
-	m_isLife = true;
 }
 
 void GameObjEnemy::onExit()
@@ -70,22 +77,32 @@ void GameObjEnemy::moveStart()
 
 void GameObjEnemy::reStart( CCNode* pSender )
 {
+	//m_mainBody->setVisible(true);
+	//m_boom->setVisible(false);
+	CCSize size = CCDirector::sharedDirector()->getWinSize();
+	this->setPosition(ccp(size.width/4 * (m_type + 1) - 30,size.height + 50));
+	//m_isLife = true;
+	//if(m_shootInterval - 0.02 > 0)
+	//	m_shootInterval -= 0.02;
+	this->moveStart();
+}
+
+void GameObjEnemy::reBorn( CCNode* pSender )
+{
 	m_mainBody->setVisible(true);
 	m_boom->setVisible(false);
 	CCSize size = CCDirector::sharedDirector()->getWinSize();
-	this->setPosition(ccp(size.width/4 * (m_type + 1) + 50,size.height + 50));
-	m_isLife = true;
+	this->setPosition(ccp(size.width/4 * (m_type + 1) - 30,size.height + 50));
 	if(m_shootInterval - 0.02 > 0)
 		m_shootInterval -= 0.02;
-	this->moveStart();
 }
 
 void GameObjEnemy::setDie()
 {
+	this->stopAllActions();
 	m_isLife = false;
 	m_mainBody->setVisible(false);
 	m_boom->setVisible(true);
-	this->stopAllActions();
 	//±¬Õ¨¶¯»­
 	CCAnimation* boomAnimation = CCAnimation::create();
 	boomAnimation->addSpriteFrameWithFileName("boom1.png");
@@ -96,7 +113,7 @@ void GameObjEnemy::setDie()
 	boomAnimation->setDelayPerUnit(0.1f);
 	boomAnimation->setRestoreOriginalFrame(true);
 	m_boom->runAction(CCSequence::create(CCAnimate::create(boomAnimation),CCCallFuncN::create(this, 
-	  callfuncN_selector(GameObjEnemy::reStart)),NULL));
+	  callfuncN_selector(GameObjEnemy::reBorn)),NULL));
 }
 
 void GameObjEnemy::setType( int type )

@@ -14,7 +14,8 @@ void GameEnemyBullet::onEnter()
 {
 	CCNode::onEnter();
 	this->setContentSize(CCSizeMake(21,62));
-	CCSprite *mainbody = CCSprite::create("DrDogZD.png");
+	CCSprite *mainbody = CCSprite::create("bullet1.png");
+	mainbody->setScale(2);
 	mainbody->runAction(CCRepeatForever::create(CCRotateBy::create(1,360)));
 	addChild(mainbody);
 }
