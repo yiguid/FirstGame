@@ -26,8 +26,8 @@ bool GameMenuScene::init()
 	CCSize size = CCDirector::sharedDirector()->getWinSize();
 
 	 //³õÊ¼»¯±³¾°
-	CCSprite* back = CCSprite::create("back-1.png");
-	back->setScale(1);
+	CCSprite* back = CCSprite::create("bg.png");
+	back->setScale(0.25);
 	back->setPosition(ccp(size.width/2,size.height/2));
 	this->addChild(back,0,0);
 

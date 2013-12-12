@@ -33,10 +33,10 @@ bool GameMainScene::init()
 {
 	CCSize size = CCDirector::sharedDirector()->getWinSize();    
 	//创建背景
-	m_bg1 = CCSprite::create("back-1.png");
-	m_bg1->setScale(1);
-	m_bg2 = CCSprite::create("back-2.png");
-	m_bg2->setScale(1);
+	m_bg1 = CCSprite::create("bg.png");
+	m_bg1->setScale(0.25);
+	m_bg2 = CCSprite::create("bg.png");
+	m_bg2->setScale(0.25);
 	m_bg1->setAnchorPoint(ccp(0,0));//设置锚点
 	m_bg2->setAnchorPoint(ccp(0,0));
 	m_bg1->setPosition( ccp(0,0) );
@@ -46,7 +46,7 @@ bool GameMainScene::init()
 	//创建主角
 	m_hero = new GameObjHero();
 	m_hero->setPosition(ccp(size.width/2,-50));
-	m_hero->setScale(0.5);
+	m_hero->setScale(0.3);
 	this->addChild(m_hero,2,1);
 	m_hero->runAction(CCMoveBy::create(0.5,ccp(0,150)));
 
@@ -57,7 +57,7 @@ bool GameMainScene::init()
 		int type = CCRANDOM_0_1() * 4;
 		GameObjEnemy* enemy = new GameObjEnemy();
 		enemy->setPosition(ccp(size.width/4 * (type + 1) + 50,size.height + 50));
-		float enemyScale = CCRANDOM_0_1() * 0.5 + 0.5;
+		float enemyScale = CCRANDOM_0_1() * 0.25 + 0.2;
 		enemy->setScale(enemyScale);
 		enemy->setType(type);
 		m_enemys->addObject(enemy);
@@ -75,11 +75,11 @@ bool GameMainScene::init()
 	//ui->addChild(m_blood1);
 	m_blood2 = CCSprite::createWithTexture(ui->getTexture());
 	m_blood2->setPosition(ccp(50,size.height - 20));
-	m_blood2->setScale(0.2f);
+	m_blood2->setScale(0.1f);
 	ui->addChild(m_blood2);
 	m_blood3 = CCSprite::createWithTexture(ui->getTexture());
 	m_blood3->setPosition(ccp(80,size.height - 20));
-	m_blood3->setScale(0.2f);
+	m_blood3->setScale(0.1f);
 	ui->addChild(m_blood3);
 	addChild(ui,4);
 
@@ -224,16 +224,16 @@ void GameMainScene::releaseHeroBullet( int x,int y )
 void GameMainScene::update( float time )
 {
 	//背景移动逻辑
-	m_bg1->setPosition(ccp(m_bg1->getPosition().x,m_bg1->getPosition().y - 1));
-	m_bg2->setPosition(ccp(m_bg2->getPosition().x,m_bg2->getPosition().y - 1));
+	m_bg1->setPosition(ccp(m_bg1->getPosition().x,m_bg1->getPosition().y - 2));
+	m_bg2->setPosition(ccp(m_bg2->getPosition().x,m_bg2->getPosition().y - 2));
 	if(m_bg2->getPosition().y < 0)
 	{
-		float temp = m_bg2->getPosition().y + 480;
+		float temp = m_bg2->getPosition().y + 640;
 		m_bg1->setPosition(ccp(m_bg2->getPosition().x,temp));
 	}
 	if(m_bg1->getPosition().y < 0)
 	{
-		float temp = m_bg1->getPosition().y + 480;
+		float temp = m_bg1->getPosition().y + 640;
 		m_bg2->setPosition(ccp(m_bg1->getPosition().x,temp));
 	}
 
@@ -247,13 +247,16 @@ void GameMainScene::update( float time )
  		{
  			for(size_t i = 0;i < m_heroBullets->capacity();i ++)
  			{
- 				if(((GameHeroBullet *)m_heroBullets->objectAtIndex(i))->getIsvisble())
+				GameHeroBullet *pBullet = (GameHeroBullet *)m_heroBullets->objectAtIndex(i);
+ 				if(pBullet->getIsvisble())
  				{
- 					if(isHit(((GameHeroBullet *)m_heroBullets->objectAtIndex(i))->getPosition(),epos,5,13,21,28))
+ 					if(isHit(pBullet->getPosition(),epos,5,13,21,28))
  					{
 						//play sound 应该移到setDie里面去
 						//SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename("enemy_down.mp3").c_str());
  						enemy->setDie();
+						pBullet->setPosition(ccp(pBullet->getPosition().x,640));
+						pBullet->setIsNotVisable(pBullet);
  						m_gameMark->addNumber(200);
  						break;
  					}

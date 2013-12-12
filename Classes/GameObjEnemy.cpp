@@ -1,9 +1,10 @@
 #include "GameObjEnemy.h"
 #include "GameMainScene.h"
+#define ENEMY_IMG "enemy.png"
 
 GameObjEnemy::GameObjEnemy(void)
 {
-	m_shootInterval = CCRANDOM_0_1() * 1 + 1;
+	m_shootInterval = CCRANDOM_0_1() * 2 + 2;
 }
 
 
@@ -16,9 +17,9 @@ void GameObjEnemy::onEnter()
 	CCNode::onEnter();
 
 	this->setContentSize(CCSizeMake(100,100));
-	m_mainBody = CCSprite::create("tempest.png");
+	m_mainBody = CCSprite::create(ENEMY_IMG);
 	CCAnimation* animation = CCAnimation::create();
-	animation->addSpriteFrameWithFileName("tempest.png");
+	animation->addSpriteFrameWithFileName(ENEMY_IMG);
 	animation->setDelayPerUnit(0.1f);
 	animation->setRestoreOriginalFrame(true);
 	m_mainBody->runAction(CCRepeatForever::create(CCAnimate::create(animation)));

@@ -28,7 +28,7 @@ bool GameAboutScene::init()
 	CCSize size = CCDirector::sharedDirector()->getWinSize();    
 	//初始化背景
 	CCSprite* bg = CCSprite::create("bg.png");
-	bg->setScale(0.5);
+	bg->setScale(0.25);
 	bg->setPosition( ccp(size.width/2, size.height/2) );
 	this->addChild(bg, 0,0);
 	
