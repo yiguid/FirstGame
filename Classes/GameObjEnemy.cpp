@@ -93,8 +93,8 @@ void GameObjEnemy::reBorn( CCNode* pSender )
 	m_boom->setVisible(false);
 	CCSize size = CCDirector::sharedDirector()->getWinSize();
 	this->setPosition(ccp(size.width/4 * (m_type + 1) - 30,size.height + 50));
-	if(m_shootInterval - 0.02 > 0)
-		m_shootInterval -= 0.02;
+	if(m_shootInterval - 0.01 > 0)
+		m_shootInterval -= 0.01;
 }
 
 void GameObjEnemy::setDie()
